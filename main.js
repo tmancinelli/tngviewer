@@ -1,3 +1,4 @@
+//list of the artists and their PIDs 
 const Artists = [
   { name: "Raphael", code: "001-03DN-0000" },
   { name: "Cimabue", code: "001-00SJ-0000" },
@@ -7,6 +8,7 @@ const Artists = [
 ];
 
 class App {
+  //list of artists in the navbar
   init() {
     const list = document.getElementById("artistsList");
     Artists.forEach(artist => {
@@ -21,16 +23,20 @@ class App {
     this.load(Artists[0].code, Artists[0].name);
   }
 
+//show the single artist
   async load(code, name) {
     const title = document.getElementById("title");
     title.innerText = name;
 
+    //fetching the manifest
     const resp = await fetch("https://media.ng-london.org.uk/iiif/" + code + "/manifest.json");
+    //parse as json
     const json = await resp.json();
 
+    //Getting and showing the content of the label object
     const label = document.getElementById("label");
     label.innerText = json.label;
-
+    
     this.populateImageList(code, name, json);
   }
 
@@ -49,17 +55,17 @@ class App {
   
     const imageList = document.getElementById("imageList");
     while (imageList.firstChild) imageList.firstChild.remove();
-
+    //create a card for each work
     data.sequences[0].canvases.forEach((canvas, id) => {
       const card = document.createElement("card");
       card.setAttribute("class", "card");
       card.setAttribute("style", "width: 18rem; margin-bottom: 4em");
-
+      //getting images from manifest
       const image = document.createElement("img");
       image.setAttribute("src", canvas["images"][0]["resource"]["service"]["@id"] + "/full/200,/0/default.jpg");
       image.setAttribute("class", "card-img-top");
       card.appendChild(image);
-
+      
       const body = document.createElement("div");
       body.setAttribute("class", "card-body");
       card.appendChild(body);
@@ -67,7 +73,7 @@ class App {
       const p = document.createElement("p");
       p.innerText = canvas['label'];
       body.append(p);
-
+      //create a link for Mirador viewer
       const a = document.createElement("a");
       a.innerText = "View with Mirador";
       a.href = "#";
